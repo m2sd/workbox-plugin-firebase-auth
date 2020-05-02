@@ -20,25 +20,26 @@ Use the module if:
    npm i workbox-firebase-auth // or yarn add workbox-firebase-auth
    ```
 
-2. Import the plugin and use it for your strategies
+2. Import the initialization helper and use it to initialize firebase in the service worker.  
+   Import the plugin and use it for your strategies.
 
    Example:
 
    ```js
    import {registerRoute} from 'workbox-routing/registerRoute.mjs';
    import {NetworkFirst} from 'workbox-strategies/NetworkFirst.mjs';
-   import FirebaseAuthPlugin from 'workbox-plugin-firebase-auth';
+   import { initFirebase, Plugin as FirebaseAuthPlugin } from 'workbox-plugin-firebase-auth';
+
+   initFirebase({
+     config: { /* your firebase config */ }
+   })
 
    registerRoute(
      /\.(?:png|gif|jpg|jpeg|svg)$/,
      new NetworkFirst({
        cacheName: 'authorizedApi',
        plugins: [
-         new FirebaseAuthPlugin({
-           firebase: {
-             config: { /* your firebase config */ }
-           }
-         }),
+         new FirebaseAuthPlugin(),
        ],
      }),
    );
@@ -47,7 +48,7 @@ Use the module if:
 ### CDN
 
 If you are using [workbox-sw](https://developers.google.com/web/tools/workbox/modules/workbox-sw) to import workbox, you can use the [unpkg CDN](https://unpkg.com/) to import the plugin.  
-It will then be available under the global variable `WorkboxPluginFirebaseAuth`.
+It will then be available under the global variable `WorkboxFirebaseAuth`.
 
 Example:
 
@@ -57,40 +58,36 @@ importScripts(
   'https://unpkg.com/workbox-plugin-firebase-auth@1.0.0-alpha.1/lib/plugin.umd.js'
 )
 
+WorkboxFirebaseAuth.initializeFirebase({
+  config: { /* your firebase config */ }
+})
+
 workbox.routing.registerRoute(
   /\.(?:png|gif|jpg|jpeg|svg)$/,
   new workbox.strategies.NetworkFirst({
     cacheName: 'authorizedApi',
     plugins: [
-      new WorkboxPluginFirebaseAuth({
-        firebase: {
-          config: { /* your firebase config */ }
-        }
-      }),
+      new WorkboxFirebaseAuth.Plugin(),
     ],
   }),
 )
 ```
 
-## Options
+## `initFirebase` options
 
-If your service worker is served from firebase hosting, associated with the firebase app you use to authorize users, you can omit configuration altogether.  
-Otherwise the [`firebase.config`](#firebaseconfig) parameter is **REQUIRED**.
+If your service worker is hosted firebase hosting, associated with the firebase app you use to authorize users, you don't have to specify any options (the helper will load the firebase SDK from [reserved URLs](https://firebase.google.com/docs/hosting/reserved-urls)).  
+Otherwise the [`config`](#config) parameter is **REQUIRED**.
 
-### firebase
+### config
 
-This key is used to configure the firebase instance.
-
-#### firebase.config
-
-**Required:** If your service worker is NOT served from firebase hosting or if you use a different app to authorize users.  
+**Required:** If your service worker is NOT hosted on firebase hosting or if you use a different app to authorize users.  
 **Type:** `object`
 
 The [firebase config object](https://firebase.google.com/docs/web/setup?authuser=0#config-object) from the app that you use to authorize your users.
 
-#### firebase.version
+#### version
 
-**Type:** `string`
+**Type:** `string`  
 **Default:** `7.14.2`
 
 This key can be used to specify the firebase version to use.
@@ -98,6 +95,8 @@ This key can be used to specify the firebase version to use.
 > **Note:** This is currently a hard coded fallback and will manually be updated.  
 > In the future this should use the version form the dependency used for development.  
 > Sadly I haven't figured out how to achieve this yet (PRs welcome :sweat_smile:)
+
+## `Plugin` options
 
 ### awaitResponse
 
@@ -114,7 +113,7 @@ This key can be used to specify additional constraints on top of the route match
 
 #### constraints.types
 
-**Type:** `string | string[]`
+**Type:** `string | string[]`  
 **Default:** `['*']`
 
 This can be used to authorize only requests that accept certain types of responses (e.g. `application/json`)
@@ -124,14 +123,21 @@ This can be used to authorize only requests that accept certain types of respons
 
 #### constraints.https
 
-**Type:** `boolean`
+**Type:** `boolean`  
 **Default:** `false`
 
-Only allow requests from secure origins (`https://` or `localhost`) to be authorized.
+Only allow requests to secure origins (`https://` or `localhost`) to be authorized.
+
+#### constraints.sameOrigin
+
+**Type:** `boolean`  
+**Default:** `true`
+
+Only allow requests to the same origin as the service worker to be authorized.
 
 #### constraints.ignorePaths
 
-**Type:** `(string | RegExp)[]`
+**Type:** `(string | RegExp)[]`  
 **Default:** `[]`
 
 Paths to ignore when authorizing requests.  

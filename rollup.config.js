@@ -39,7 +39,7 @@ export default [
     input: 'src/plugin.ts',
     output: {
       file: 'lib/plugin.umd.js',
-      name: 'WorkboxPluginFirebaseAuth',
+      name: 'WorkboxFirebaseAuth',
       format: 'iife',
     },
     plugins: commonPlugins([typescript()]),
