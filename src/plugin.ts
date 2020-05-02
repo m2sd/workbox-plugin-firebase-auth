@@ -5,7 +5,7 @@ declare const firebase: typeof import('firebase')
 export interface Options {
   awaitResponse?: boolean
   firebase?: {
-    version: string
+    version?: string
     config?: object
   }
   constraints?: {
@@ -36,7 +36,10 @@ class FirebaseAuthPlugin implements WorkboxPlugin {
       ignorePaths: ignorePaths || [],
     }
 
-    const fire = options.firebase || { version: DEFAULT_FIREBASE_VERSION }
+    const fire = {
+      version: DEFAULT_FIREBASE_VERSION,
+      ...options.firebase,
+    }
 
     if (fire.config) {
       importScripts(

@@ -2,7 +2,8 @@
 
 This is a simple plugin for workbox strategies which adds an `Authorization: Bearer` header with the return value from [`firebase.User.getIdToken(true)`](https://firebase.google.com/docs/reference/js/firebase.User#getidtoken) to the [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) if a firebase User is authenticated (i.e. [`firebase.auth.Auth.onAuthStateChanged()`](https://firebase.google.com/docs/reference/js/firebase.auth.Auth#onauthstatechanged) returns a [`firebase.User`](https://firebase.google.com/docs/reference/js/firebase.User)).
 
-This way you are able to cache authorized routes without relying on a session cookie or an API token.
+**CAUTION:** Be aware that request authorization happens before the response is passed to the caching strategy.  
+Please plan accordingly (e.g. a cache first strategy might serve authorized content to non authorized users).
 
 ## Usage
 
@@ -53,12 +54,12 @@ Example:
 ```js
 importScripts(
   'https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js',
-  'https://unpkg.com/workbox-plugin-firebase-auth'
+  'https://unpkg.com/workbox-plugin-firebase-auth@1.0.0-alpha.1/lib/plugin.umd.js'
 )
 
 workbox.routing.registerRoute(
   /\.(?:png|gif|jpg|jpeg|svg)$/,
-  new workbox.strategies.CacheFirst({
+  new workbox.strategies.NetworkFirst({
     cacheName: 'authorizedApi',
     plugins: [
       new WorkboxPluginFirebaseAuth({
@@ -103,8 +104,7 @@ This key can be used to specify the firebase version to use.
 **Type:** `boolean`  
 **Default:** `false`
 
-If true the plugin will await the fetch to go through and check if the response has a 401 status before attaching the authorization and resending the request.  
-Be aware that this happens before the response is passed to the caching strategy, please plan accordingly (e.g. a cache first strategy might serve authorized content to non authorized users).
+If true the plugin will await the fetch to go through and check if the response has a 401 status before attaching the authorization and resending the request.
 
 > **Note:** Please make sure your server responds to unauthorized requests with a 401 status code, so that the plugin can correctly identify authorization failures.
 
