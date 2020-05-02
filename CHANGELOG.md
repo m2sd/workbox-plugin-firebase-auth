@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0-alpha.2](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2020-05-02)
+
+
+### Features
+
+* **plugin:** split firebase initialization into separate function ([de46f14](https://github.com/m2sd/workbox-plugin-firebase-auth/commit/de46f14be077d5bd3f03739f2a591e756d5c52e0))
+
 ## [1.0.0-alpha.1](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2020-05-02)
 
 
