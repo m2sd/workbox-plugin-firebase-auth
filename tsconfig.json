@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "lib": [
+      "ES2015",
+      "ES2016.Array.Include",
+      "WebWorker"
+    ],
+    "moduleResolution": "node",
+    "strict": true,
+    "removeComments": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+  },
+  "include": [
+    "src",
+  ]
+}
