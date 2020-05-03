@@ -103,10 +103,12 @@ const shouldAuthorizeRequest = (
     constraints.types,
     request.headers.get('accept')
   )
+
   const isHttps =
     !constraints.https ||
     self.location.protocol === 'https:' ||
     self.location.hostname === 'localhost'
+
   const isIgnored =
     !!constraints.ignorePaths.length &&
     constraints.ignorePaths.some(path => {
@@ -195,7 +197,7 @@ class Plugin implements WorkboxPlugin {
       if (!token) return response
 
       const authorized = authorizeRequest(request, token)
-      return fetch(authorized)
+      return await fetch(authorized)
     } catch (e) {
       console.error(e)
 

@@ -1,0 +1,9 @@
+{
+  "bumpFiles": [
+    "package.json",
+    {
+      "filename": "README.md",
+      "updater": "readme-updater.js"
+    }
+  ]
+}

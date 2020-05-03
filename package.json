@@ -21,10 +21,11 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development yarn build --watch",
     "build": "rollup --config",
+    "firebase:update": "node ./firebase-version-updater.js",
     "lint": "eslint --ext .ts --ignore-path .gitignore ./src",
     "lint:fix": "yarn lint --fix",
     "lint:check": "eslint --print-config .eslintrc.json | eslint-config-prettier-check",
-    "release": "yarn build && standard-version"
+    "release": "yarn firebase:update && yarn build && standard-version"
   },
   "dependencies": {},
   "devDependencies": {

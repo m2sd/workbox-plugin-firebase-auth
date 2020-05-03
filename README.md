@@ -87,14 +87,10 @@ The [firebase config object](https://firebase.google.com/docs/web/setup?authuser
 
 #### version
 
-**Type:** `string`  
+**Type:** `string` (Firebase version)  
 **Default:** `7.14.2`
 
 This key can be used to specify the firebase version to use.
-
-> **Note:** This is currently a hard coded fallback and will manually be updated.  
-> In the future this should use the version form the dependency used for development.  
-> Sadly I haven't figured out how to achieve this yet (PRs welcome :sweat_smile:)
 
 ## `Plugin` options
 
