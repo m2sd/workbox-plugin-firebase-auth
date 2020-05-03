@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.7...v1.0.0) (2020-05-03)
+
+
+### Bug Fixes
+
+* **exports:** split exported object into named exports ([f8c40d5](https://github.com/m2sd/workbox-plugin-firebase-auth/commit/f8c40d52363219151c7f5f2b362af963889765d6))
+
 ## [1.0.0-alpha.7](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2020-05-03)
 
 
