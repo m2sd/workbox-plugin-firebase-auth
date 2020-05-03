@@ -47,7 +47,7 @@ const initializeFirebase = (options: FirebaseOptions): void => {
   }
 }
 
-const getIdToken = async (): Promise<string | null> => {
+const getIdToken = (): Promise<string | null> => {
   return new Promise<string | null>(resolve => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
       unsubscribe()
@@ -153,37 +153,64 @@ class Plugin implements WorkboxPlugin {
     }
   }
 
-  requestWillFetch: WorkboxPlugin['requestWillFetch'] = async ({ request }) => {
-    if (
-      !this.awaitResponse ||
-      !shouldAuthorizeRequest(request, this.constraints)
-    ) {
-      return request
-    }
+  requestWillFetch: WorkboxPlugin['requestWillFetch'] = ({ request }) => {
+    return new Promise(resolve => {
+      if (
+        !this.awaitResponse ||
+        !shouldAuthorizeRequest(request, this.constraints)
+      ) {
+        resolve(request)
 
-    const token = await getIdToken()
-    if (!token) return request
+        return
+      }
 
-    return authorizeRequest(request, token)
+      getIdToken()
+        .then(token => {
+          if (!token) {
+            resolve(request)
+
+            return
+          }
+
+          resolve(authorizeRequest(request, token))
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    })
   }
 
-  fetchDidSucceed: WorkboxPlugin['fetchDidSucceed'] = async ({
+  fetchDidSucceed: WorkboxPlugin['fetchDidSucceed'] = ({
     request,
     response,
   }) => {
-    if (
-      this.awaitResponse ||
-      response.status !== 401 ||
-      !shouldAuthorizeRequest(request, this.constraints)
-    ) {
-      return response
-    }
+    return new Promise(resolve => {
+      if (
+        this.awaitResponse ||
+        response.status !== 401 ||
+        !shouldAuthorizeRequest(request, this.constraints)
+      ) {
+        resolve(response)
 
-    const token = await getIdToken()
-    if (!token) return response
+        return
+      }
 
-    const authorized = authorizeRequest(request, token)
-    return fetch(authorized)
+      getIdToken()
+        .then(token => {
+          if (!token) {
+            resolve(response)
+            return
+          }
+
+          const authorized = authorizeRequest(request, token)
+          fetch(authorized).then(response => {
+            resolve(response)
+          })
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    })
   }
 }
 
