@@ -1,6 +1,6 @@
 {
   "name": "workbox-plugin-firebase-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Plugin to authorize workbox requests using firebase authentication",
   "keywords": [
     "firebase",
