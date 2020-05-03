@@ -156,7 +156,7 @@ class Plugin implements WorkboxPlugin {
   requestWillFetch: WorkboxPlugin['requestWillFetch'] = ({ request }) => {
     return new Promise(resolve => {
       if (
-        !this.awaitResponse ||
+        this.awaitResponse ||
         !shouldAuthorizeRequest(request, this.constraints)
       ) {
         resolve(request)
@@ -186,7 +186,7 @@ class Plugin implements WorkboxPlugin {
   }) => {
     return new Promise(resolve => {
       if (
-        this.awaitResponse ||
+        !this.awaitResponse ||
         response.status !== 401 ||
         !shouldAuthorizeRequest(request, this.constraints)
       ) {
