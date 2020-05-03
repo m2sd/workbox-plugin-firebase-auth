@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0-alpha.5](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2020-05-03)
+
+
+### Bug Fixes
+
+* **checks:** update ignore paths condition ([c604ff0](https://github.com/m2sd/workbox-plugin-firebase-auth/commit/c604ff0bb4fcd463fb789aae4f84af54102c9de8))
+
 ## [1.0.0-alpha.4](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2020-05-03)
 
 
