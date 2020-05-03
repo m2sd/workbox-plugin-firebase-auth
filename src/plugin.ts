@@ -103,7 +103,7 @@ const shouldAuthorizeRequest = (
     self.location.protocol === 'https:' ||
     self.location.hostname === 'localhost'
   const isIgnored =
-    !constraints.ignorePaths.length ||
+    constraints.ignorePaths.length &&
     constraints.ignorePaths.some(path => {
       if (typeof path === 'string') {
         return url.pathname.startsWith(path)
