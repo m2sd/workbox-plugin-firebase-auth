@@ -9,10 +9,7 @@ Please plan accordingly (e.g. a cache first strategy might serve authorized cont
 
 ### Module
 
-Use the module if:
-
-- you are building your service worker [using a bundler](https://developers.google.com/web/tools/workbox/guides/using-bundlers).
-- you are generating your service worker with [workbox-build](https://developers.google.com/web/tools/workbox/modules/workbox-build)
+Use the module if you are building your service worker [using a bundler](https://developers.google.com/web/tools/workbox/guides/using-bundlers).
 
 1. Add the dependency:
 
@@ -26,8 +23,8 @@ Use the module if:
    Example:
 
    ```js
-   import {registerRoute} from 'workbox-routing/registerRoute.mjs';
-   import {NetworkFirst} from 'workbox-strategies/NetworkFirst.mjs';
+   import { registerRoute } from 'workbox-routing/registerRoute.mjs';
+   import { NetworkFirst } from 'workbox-strategies/NetworkFirst.mjs';
    import { initFirebase, Plugin as FirebaseAuthPlugin } from 'workbox-plugin-firebase-auth';
 
    initFirebase({
@@ -73,7 +70,7 @@ workbox.routing.registerRoute(
 )
 ```
 
-## `initFirebase` options
+## `initializeFirebase` options
 
 If your service worker is hosted firebase hosting, associated with the firebase app you use to authorize users, you don't have to specify any options (the helper will load the firebase SDK from [reserved URLs](https://firebase.google.com/docs/hosting/reserved-urls)).  
 Otherwise the [`config`](#config) parameter is **REQUIRED**.
@@ -85,7 +82,7 @@ Otherwise the [`config`](#config) parameter is **REQUIRED**.
 
 The [firebase config object](https://firebase.google.com/docs/web/setup?authuser=0#config-object) from the app that you use to authorize your users.
 
-#### version
+### version
 
 **Type:** `string` (Firebase version)  
 **Default:** `7.14.2`
@@ -140,4 +137,4 @@ Paths to ignore when authorizing requests.
 
 > **Note:** Checks against the pathname of the request (e.g. `/api/some-resource`)  
 > If the argument is a `string` a request will be ignored if the pathname starts with that `string`.  
-> If the argument is a `RegExp` the leading `'/'` will be stripped from the pathname and it will be checked against the `RegExp`.
+> If the argument is a `RegExp` a request will be ignored if the pathname matches the `RegExp`.
