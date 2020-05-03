@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0-alpha.3](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2020-05-03)
+
+
+### Bug Fixes
+
+* use promises instead of async/await ([70c721b](https://github.com/m2sd/workbox-plugin-firebase-auth/commit/70c721b7a4b053e014a409262ad6d46d0726d518))
+
 ## [1.0.0-alpha.2](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2020-05-02)
 
 
