@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0-alpha.4](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2020-05-03)
+
+
+### Bug Fixes
+
+* **plugin:** invert boolean checks for awaitResponse ([80b19e8](https://github.com/m2sd/workbox-plugin-firebase-auth/commit/80b19e82639d6f8faf9eb97bbf5d6d4857af3241))
+
 ## [1.0.0-alpha.3](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2020-05-03)
 
 
