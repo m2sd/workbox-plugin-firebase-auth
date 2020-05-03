@@ -26,7 +26,7 @@ interface ResolvedConstraints {
 
 const DEFAULT_FIREBASE_VERSION = '7.14.2'
 
-const initializeFirebase = (options: FirebaseOptions): void => {
+export const initializeFirebase = (options: FirebaseOptions): void => {
   const opts = {
     version: DEFAULT_FIREBASE_VERSION,
     ...options,
@@ -144,7 +144,7 @@ const authorizeRequest = (original: Request, token: string): Request => {
   return authorized
 }
 
-class Plugin implements WorkboxPlugin {
+export class Plugin implements WorkboxPlugin {
   private readonly constraints: ResolvedConstraints
   private readonly awaitResponse: boolean
 
@@ -204,9 +204,4 @@ class Plugin implements WorkboxPlugin {
       return response
     }
   }
-}
-
-export default {
-  initializeFirebase,
-  Plugin,
 }
