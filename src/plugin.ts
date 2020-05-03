@@ -48,19 +48,24 @@ const initializeFirebase = (options: FirebaseOptions): void => {
 }
 
 const getIdToken = (): Promise<string | null> => {
-  return new Promise<string | null>(resolve => {
+  return new Promise<string | null>((resolve, reject) => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
       unsubscribe()
       if (user) {
         // force token refresh as it might be used to sign in server side
-        user.getIdToken(true).then(
-          idToken => {
-            resolve(idToken)
-          },
-          () => {
-            resolve(null)
-          }
-        )
+        user
+          .getIdToken(true)
+          .then(
+            idToken => {
+              resolve(idToken)
+            },
+            () => {
+              resolve(null)
+            }
+          )
+          .catch(e => {
+            reject(e)
+          })
       } else {
         resolve(null)
       }
@@ -103,7 +108,7 @@ const shouldAuthorizeRequest = (
     self.location.protocol === 'https:' ||
     self.location.hostname === 'localhost'
   const isIgnored =
-    constraints.ignorePaths.length &&
+    !!constraints.ignorePaths.length &&
     constraints.ignorePaths.some(path => {
       if (typeof path === 'string') {
         return url.pathname.startsWith(path)
@@ -153,64 +158,49 @@ class Plugin implements WorkboxPlugin {
     }
   }
 
-  requestWillFetch: WorkboxPlugin['requestWillFetch'] = ({ request }) => {
-    return new Promise(resolve => {
-      if (
-        this.awaitResponse ||
-        !shouldAuthorizeRequest(request, this.constraints)
-      ) {
-        resolve(request)
+  requestWillFetch: WorkboxPlugin['requestWillFetch'] = async ({ request }) => {
+    if (
+      this.awaitResponse ||
+      !shouldAuthorizeRequest(request, this.constraints)
+    ) {
+      return request
+    }
 
-        return
-      }
+    try {
+      const token = await getIdToken()
+      if (!token) return request
 
-      getIdToken()
-        .then(token => {
-          if (!token) {
-            resolve(request)
+      return authorizeRequest(request, token)
+    } catch (e) {
+      console.error(e)
 
-            return
-          }
-
-          resolve(authorizeRequest(request, token))
-        })
-        .catch(e => {
-          console.error(e)
-        })
-    })
+      return request
+    }
   }
 
-  fetchDidSucceed: WorkboxPlugin['fetchDidSucceed'] = ({
+  fetchDidSucceed: WorkboxPlugin['fetchDidSucceed'] = async ({
     request,
     response,
   }) => {
-    return new Promise(resolve => {
-      if (
-        !this.awaitResponse ||
-        response.status !== 401 ||
-        !shouldAuthorizeRequest(request, this.constraints)
-      ) {
-        resolve(response)
+    if (
+      !this.awaitResponse ||
+      response.status !== 401 ||
+      !shouldAuthorizeRequest(request, this.constraints)
+    ) {
+      return response
+    }
 
-        return
-      }
+    try {
+      const token = await getIdToken()
+      if (!token) return response
 
-      getIdToken()
-        .then(token => {
-          if (!token) {
-            resolve(response)
-            return
-          }
+      const authorized = authorizeRequest(request, token)
+      return fetch(authorized)
+    } catch (e) {
+      console.error(e)
 
-          const authorized = authorizeRequest(request, token)
-          fetch(authorized).then(response => {
-            resolve(response)
-          })
-        })
-        .catch(e => {
-          console.error(e)
-        })
-    })
+      return response
+    }
   }
 }
 
