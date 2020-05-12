@@ -25,9 +25,9 @@ Use the module if you are building your service worker [using a bundler](https:/
    ```js
    import { registerRoute } from 'workbox-routing/registerRoute.mjs';
    import { NetworkFirst } from 'workbox-strategies/NetworkFirst.mjs';
-   import { initFirebase, Plugin as FirebaseAuthPlugin } from 'workbox-plugin-firebase-auth';
+   import { initializeFirebase, Plugin as FirebaseAuthPlugin } from 'workbox-plugin-firebase-auth';
 
-   initFirebase({
+   initializeFirebase({
      config: { /* your firebase config */ }
    })
 
