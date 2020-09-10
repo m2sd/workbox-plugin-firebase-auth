@@ -57,7 +57,7 @@ Example:
 ```js
 importScripts(
   'https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js',
-  'https://unpkg.com/workbox-plugin-firebase-auth@1.0.2/lib/plugin.umd.js'
+  'https://unpkg.com/workbox-plugin-firebase-auth@1.1.0/lib/plugin.umd.js'
 )
 
 WorkboxFirebaseAuth.initializeFirebase({

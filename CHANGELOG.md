@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.2...v1.1.0) (2020-09-10)
+
+
+### Features
+
+* **firebase:** implement additional services option ([d3a35d9](https://github.com/m2sd/workbox-plugin-firebase-auth/commit/d3a35d95d50f2d81605a43f4bd5504a02550553b))
+
 ### [1.0.2](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.1...v1.0.2) (2020-05-12)
 
 ### [1.0.1](https://github.com/m2sd/workbox-plugin-firebase-auth/compare/v1.0.0...v1.0.1) (2020-05-03)
