@@ -4,7 +4,8 @@ declare const firebase: typeof import('firebase')
 
 export interface FirebaseOptions {
   version?: string
-  config?: object
+  services?: string[]
+  config?: Record<string, unknown>
 }
 
 export interface Options {
@@ -24,25 +25,51 @@ interface ResolvedConstraints {
   ignorePaths: (string | RegExp)[]
 }
 
-const DEFAULT_FIREBASE_VERSION = '7.14.2'
+const DEFAULT_FIREBASE_VERSION = '7.19.1'
 
-export const initializeFirebase = (options: FirebaseOptions): void => {
-  const opts = {
-    version: DEFAULT_FIREBASE_VERSION,
-    ...options,
-  }
+const AVAILABLE_SERVICES = [
+  'analytics',
+  'firestore',
+  'functions',
+  'messaging',
+  'storage',
+  'performance',
+  'database',
+  'config',
+]
 
-  if (opts.config) {
+export const initializeFirebase = ({
+  version = DEFAULT_FIREBASE_VERSION,
+  services = [],
+  config,
+}: FirebaseOptions = {}): void => {
+  const additionalServices = services.filter(s =>
+    AVAILABLE_SERVICES.includes(s)
+  )
+
+  if (config) {
     importScripts(
-      `https://www.gstatic.com/firebasejs/${opts.version}/firebase-app.js`
+      `https://www.gstatic.com/firebasejs/${version}/firebase-app.js`
     )
     importScripts(
-      `https://www.gstatic.com/firebasejs/${opts.version}/firebase-auth.js`
+      `https://www.gstatic.com/firebasejs/${version}/firebase-auth.js`
     )
-    firebase.initializeApp(opts.config)
+
+    additionalServices.forEach(s => {
+      importScripts(
+        `https://www.gstatic.com/firebasejs/${version}/firebase-${s}.js`
+      )
+    })
+
+    firebase.initializeApp(config)
   } else {
-    importScripts(`/__/firebase/${opts.version}/firebase-app.js`)
-    importScripts(`/__/firebase/${opts.version}/firebase-auth.js`)
+    importScripts(`/__/firebase/${version}/firebase-app.js`)
+    importScripts(`/__/firebase/${version}/firebase-auth.js`)
+
+    additionalServices.forEach(s => {
+      importScripts(`/__/firebase/${version}/firebase-${s}.js`)
+    })
+
     importScripts('/__/firebase/init.js')
   }
 }
@@ -73,7 +100,7 @@ const getIdToken = (): Promise<string | null> => {
   })
 }
 
-const checkType = (constraint: string[], accept: string | null): boolean => {
+const checkType = (constraints: string[], accept: string | null): boolean => {
   const types =
     accept &&
     accept.split(',').map(t => {
@@ -83,10 +110,12 @@ const checkType = (constraint: string[], accept: string | null): boolean => {
     })
 
   return (
-    !constraint ||
-    constraint.includes('*') ||
+    !constraints.length ||
+    constraints.includes('*') ||
     !types ||
-    types.some(t => constraint.includes(t))
+    types.some(t =>
+      constraints.some(c => new RegExp(`^${c.replace('*', '[^/]*')}$`).test(t))
+    )
   )
 }
 

@@ -28,11 +28,16 @@ Use the module if you are building your service worker [using a bundler](https:/
    import { initializeFirebase, Plugin as FirebaseAuthPlugin } from 'workbox-plugin-firebase-auth';
 
    initializeFirebase({
-     config: { /* your firebase config */ }
+     config: { /* your firebase config */ },
+     services: ['messaging']
    })
 
+   // `firebase` is now available in worker scope
+   firebase.auth()
+   firebase.messaging()
+
    registerRoute(
-     /\.(?:png|gif|jpg|jpeg|svg)$/,
+     /\/api\/.*/,
      new NetworkFirst({
        cacheName: 'authorizedApi',
        plugins: [
@@ -56,11 +61,16 @@ importScripts(
 )
 
 WorkboxFirebaseAuth.initializeFirebase({
-  config: { /* your firebase config */ }
+  config: { /* your firebase config */ },
+  services: ['messaging']
 })
 
+// `firebase` is now available in worker scope
+firebase.auth()
+firebase.messaging()
+
 workbox.routing.registerRoute(
-  /\.(?:png|gif|jpg|jpeg|svg)$/,
+  /\/api\/.*/,
   new workbox.strategies.NetworkFirst({
     cacheName: 'authorizedApi',
     plugins: [
@@ -77,17 +87,35 @@ Otherwise the [`config`](#config) parameter is **REQUIRED**.
 
 ### config
 
-**Required:** If your service worker is NOT hosted on firebase hosting or if you use a different app to authorize users.  
-**Type:** `object`
+**Type:** `object`  
+**Required:** If your service worker is NOT hosted on firebase hosting or if you use a different app to authorize users.
 
 The [firebase config object](https://firebase.google.com/docs/web/setup?authuser=0#config-object) from the app that you use to authorize your users.
 
 ### version
 
 **Type:** `string` (Firebase version)  
-**Default:** `7.14.2`
+**Default:** `7.19.1`
 
-This key can be used to specify the firebase version to use.
+This option can be used to specify the firebase version to use.
+
+### services
+
+**Type:** `string[]`  
+**Default:** `[]`
+
+This option can be use to load additional firebase services.  
+Available services are: (see: [Reserved URLs](https://firebase.google.com/docs/hosting/reserved-urls#libraries_hosting-urls))
+
+- `'auth'` (always included)
+- `'analytics'`
+- `'firestore'`
+- `'functions'`
+- `'messaging'`
+- `'storage'`
+- `'performance'`
+- `'database'`
+- `'config'`
 
 ## `Plugin` options
 
@@ -112,7 +140,7 @@ This key can be used to specify additional constraints on top of the route match
 This can be used to authorize only requests that accept certain types of responses (e.g. `application/json`)
 
 > **Note:** This simply matches the entries from the `Accept` request header against the passed array/string.  
-> As of yet group matching is not supported (e.g. `text/*` will not match `text/html`)
+> Group matching is supported (e.g. `text/*` will match `text/html`, `text/plain` and `text/csv`)
 
 #### constraints.https
 
