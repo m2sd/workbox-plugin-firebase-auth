@@ -1,6 +1,6 @@
 import { WorkboxPlugin } from 'workbox-core'
 
-declare const firebase: typeof import('firebase')
+declare const firebase: typeof import('firebase').default
 
 export interface FirebaseOptions {
   version?: string
@@ -14,6 +14,7 @@ export interface Options {
     types?: string | string[]
     https?: boolean
     sameOrigin?: boolean
+    mode?: RequestMode
     ignorePaths?: (string | RegExp)[]
   }
 }
@@ -22,10 +23,11 @@ interface ResolvedConstraints {
   types: string[]
   https: boolean
   sameOrigin: boolean
+  mode: RequestMode
   ignorePaths: (string | RegExp)[]
 }
 
-const DEFAULT_FIREBASE_VERSION = '7.19.1'
+const DEFAULT_FIREBASE_VERSION = '8.0.2'
 
 const AVAILABLE_SERVICES = [
   'analytics',
@@ -151,7 +153,11 @@ const shouldAuthorizeRequest = (
   return isSameOrigin && hasCorrectType && isHttps && !isIgnored
 }
 
-const authorizeRequest = (original: Request, token: string): Request => {
+const authorizeRequest = (
+  original: Request,
+  token: string,
+  constraints: ResolvedConstraints
+): Request => {
   // Clone headers as request headers are immutable.
   const headers = new Headers()
   original.headers.forEach((value, key) => {
@@ -165,7 +171,7 @@ const authorizeRequest = (original: Request, token: string): Request => {
   const { url, ...props } = original.clone()
   const authorized = new Request(url, {
     ...props,
-    mode: 'same-origin',
+    mode: constraints.mode,
     redirect: 'manual',
     headers,
   })
@@ -180,11 +186,13 @@ export class Plugin implements WorkboxPlugin {
   constructor(options: Options = {}) {
     this.awaitResponse = options.awaitResponse || false
 
-    const { types, https, sameOrigin, ignorePaths } = options.constraints || {}
+    const { types, https, sameOrigin, mode, ignorePaths } =
+      options.constraints || {}
     this.constraints = {
       types: typeof types === 'string' ? [types] : types || ['*'],
       https: !!https,
       sameOrigin: typeof sameOrigin === 'boolean' ? sameOrigin : true,
+      mode: mode || 'same-origin',
       ignorePaths: ignorePaths || [],
     }
   }
@@ -201,7 +209,7 @@ export class Plugin implements WorkboxPlugin {
       const token = await getIdToken()
       if (!token) return request
 
-      return authorizeRequest(request, token)
+      return authorizeRequest(request, token, this.constraints)
     } catch (e) {
       console.error(e)
 
@@ -225,7 +233,7 @@ export class Plugin implements WorkboxPlugin {
       const token = await getIdToken()
       if (!token) return response
 
-      const authorized = authorizeRequest(request, token)
+      const authorized = authorizeRequest(request, token, this.constraints)
       return await fetch(authorized)
     } catch (e) {
       console.error(e)
