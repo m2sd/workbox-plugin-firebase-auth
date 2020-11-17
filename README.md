@@ -23,13 +23,18 @@ Use the module if you are building your service worker [using a bundler](https:/
    Example:
 
    ```js
-   import { registerRoute } from 'workbox-routing/registerRoute.mjs';
-   import { NetworkFirst } from 'workbox-strategies/NetworkFirst.mjs';
-   import { initializeFirebase, Plugin as FirebaseAuthPlugin } from 'workbox-plugin-firebase-auth';
+   import { registerRoute } from 'workbox-routing/registerRoute.mjs'
+   import { NetworkFirst } from 'workbox-strategies/NetworkFirst.mjs'
+   import {
+     initializeFirebase,
+     Plugin as FirebaseAuthPlugin,
+   } from 'workbox-plugin-firebase-auth'
 
    initializeFirebase({
-     config: { /* your firebase config */ },
-     services: ['messaging']
+     config: {
+       /* your firebase config */
+     },
+     services: ['messaging'],
    })
 
    // `firebase` is now available in worker scope
@@ -40,11 +45,9 @@ Use the module if you are building your service worker [using a bundler](https:/
      /\/api\/.*/,
      new NetworkFirst({
        cacheName: 'authorizedApi',
-       plugins: [
-         new FirebaseAuthPlugin(),
-       ],
-     }),
-   );
+       plugins: [new FirebaseAuthPlugin()],
+     })
+   )
    ```
 
 ### CDN
@@ -61,8 +64,10 @@ importScripts(
 )
 
 WorkboxFirebaseAuth.initializeFirebase({
-  config: { /* your firebase config */ },
-  services: ['messaging']
+  config: {
+    /* your firebase config */
+  },
+  services: ['messaging'],
 })
 
 // `firebase` is now available in worker scope
@@ -73,10 +78,8 @@ workbox.routing.registerRoute(
   /\/api\/.*/,
   new workbox.strategies.NetworkFirst({
     cacheName: 'authorizedApi',
-    plugins: [
-      new WorkboxFirebaseAuth.Plugin(),
-    ],
-  }),
+    plugins: [new WorkboxFirebaseAuth.Plugin()],
+  })
 )
 ```
 
@@ -95,7 +98,7 @@ The [firebase config object](https://firebase.google.com/docs/web/setup?authuser
 ### version
 
 **Type:** `string` (Firebase version)  
-**Default:** `7.19.1`
+**Default:** `8.0.2`
 
 This option can be used to specify the firebase version to use.
 
@@ -156,12 +159,19 @@ Only allow requests to secure origins (`https://` or `localhost`) to be authoriz
 
 Only allow requests to the same origin as the service worker to be authorized.
 
+#### constraints.mode
+
+**Type:** `'cors' | 'navigate' | 'no-cors' | 'same-origin'`  
+**Default:** `'same-origin'`
+
+Set the request mode of the request by the plugin.s
+
 #### constraints.ignorePaths
 
 **Type:** `(string | RegExp)[]`  
 **Default:** `[]`
 
-Paths to ignore when authorizing requests.  
+Paths to ignore when authorizing requests.
 
 > **Note:** Checks against the pathname of the request (e.g. `/api/some-resource`)  
 > If the argument is a `string` a request will be ignored if the pathname starts with that `string`.  
